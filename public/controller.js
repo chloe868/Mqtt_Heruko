@@ -1,6 +1,6 @@
-$(document).ready(function () {
+$(document).ready(function() {
     var topic1 = $("#Topic").val();
-    $("#btnDisconnect").click(function () {
+    $("#btnDisconnect").click(function() {
         //  $("button").attr("disable", true);
         Swal.fire({
             title: 'Are you sure you want to disconnect?',
@@ -10,25 +10,25 @@ $(document).ready(function () {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes'
-        }).then((result) => {
+          }).then((result) => {
             if (result.value) {
-                Swal.fire(
-                    'Disconnect!',
-                    'You have been disconnect.',
-                    'success',
-                    client.end(),
-                    location.reload()
-                )
+              Swal.fire(
+                'Disconnect!',
+                'You have been disconnect.',
+                'success',
+                client.end(),
+                location.reload()
+              )
             }
-        })
+          })
     })
-
-    $("#btnConnect").click(function () {
+    
+    $("#btnConnect").click(function() {
         //$("button").attr("disable", false);
         // console.log($("#Address").val());
         client = mqtt.connect($("#Address").val())
 
-        client.on("connect", function () {
+        client.on("connect", function() {
             $("#checkStatus").val("Connected !");
             Swal.fire({
                 position: 'center',
@@ -36,46 +36,39 @@ $(document).ready(function () {
                 title: 'Successfully Connected',
                 showConfirmButton: false,
                 timer: 1500
-            })
+              })
         })
-        subs = false;
-        $("#btnPublish").click(function () {
 
-            var topic = $("#Topic").val();
-            var payload = $("#Payload").val();
+        client.subscribe(topic)
+        client.on("message", function(topic, payload) {
             var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-            $("#tbpublish").append(row);
-            subs = true;
-
-            client.publish(topic, payload)
+                $("#tbbroker").append(row);
         })
 
-        $("#btnSubscribe").click(function () {
-            var topic = $("#SubTopic").val();
-            var row = "<tr><td>" + topic + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-            $("#tbsubscribe").append(row);
-            $("#btnPublish").click(function () {
-                var payload = $("#Payload").val();
-                if (topic == topic1) {
-                    var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-                    $("#tbbroker").append(row);
-                }
+    })
 
-            });
-            topic1 = $("#Topic").val();
+    subs = false;
+    $("#btnPublish").click(function() {
 
-            client.subscribe(topic)
-            client.on("message", function (topic, payload) {
-                console.log([topic, payload].join(": "));
-            })
+        var topic = $("#Topic").val();
+        var payload = $("#Payload").val();
+        var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+        $("#tbpublish").append(row);
+        subs = true;
 
-        })
-        $("#btnUnsubscribe").click(function () {
-            var topic = $("#SubTopic").val();
-            client.unsubscribe(topic)
-            topic1 = "";
+        client.publish(topic, payload)
+    })
 
-        })
+    $("#btnSubscribe").click(function() {
+        var topic = $("#SubTopic").val();
+        var row = "<tr><td>" + topic + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+        $("#tbsubscribe").append(row);
+
+    })
+    $("#btnUnsubscribe").click(function() {
+        var topic = $("#SubTopic").val();
+        client.unsubscribe(topic)
+        topic1 = "";
 
     })
 })
