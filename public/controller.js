@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var topic = $("#Topic").val();
+    var topic1 = $("#Topic").val();
     $("#btnDisconnect").click(function() {
         //  $("button").attr("disable", true);
         Swal.fire({
