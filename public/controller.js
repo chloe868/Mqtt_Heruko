@@ -38,37 +38,35 @@ $(document).ready(function() {
                 timer: 1500
               })
         })
+        subs = false;
+        $("#btnPublish").click(function() {
+            var topic = $("#Topic").val();
+            var payload = $("#Payload").val();
+            var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+            $("#tbpublish").append(row);
+            subs = true;
 
-        client.subscribe(topic)
+            client.publish(topic, payload)
+        })
         client.on("message", function(topic, payload) {
             var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-                $("#tbbroker").append(row);
+            $("#tbbroker").append(row);
         })
 
-    })
+        $("#btnSubscribe").click(function() {
+            var topic = $("#SubTopic").val();
+            var row = "<tr><td>" + topic + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+            $("#tbsubscribe").append(row);
 
-    subs = false;
-    $("#btnPublish").click(function() {
+            client.subscribe(topic)     
+        })
+        
+        $("#btnUnsubscribe").click(function() {
+            var topic = $("#SubTopic").val();
+            client.unsubscribe(topic)
+            topic1 = "";
 
-        var topic = $("#Topic").val();
-        var payload = $("#Payload").val();
-        var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-        $("#tbpublish").append(row);
-        subs = true;
-
-        client.publish(topic, payload)
-    })
-
-    $("#btnSubscribe").click(function() {
-        var topic = $("#SubTopic").val();
-        var row = "<tr><td>" + topic + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-        $("#tbsubscribe").append(row);
-
-    })
-    $("#btnUnsubscribe").click(function() {
-        var topic = $("#SubTopic").val();
-        client.unsubscribe(topic)
-        topic1 = "";
+        })
 
     })
 })
